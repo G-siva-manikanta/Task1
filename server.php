@@ -7,7 +7,7 @@ if(trim($_POST['search_key'])!=''){
   $searchkey = $_POST['search_key'];
 
  $address = urlencode($searchkey);
- $url = "https://maps.google.com/maps/api/geocode/json?key=YOURAPIKEY&address=".urlencode($address);
+ $url = "https://maps.google.com/maps/api/geocode/json?key=YOUR-API-KEY&address=".urlencode($address);
 $ch = curl_init();
         	curl_setopt($ch, CURLOPT_URL, $url);
         	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -42,13 +42,11 @@ $ch = curl_init();
         		$sql = "insert into user_places (lat,longitude,city,country,user_id,address) values ('".$lat."','".$long."','".$city."','".$country."','".$user_id."','".$result_address."')";
                 $query = mysqli_query($conn,$sql);
         		//echo $sql;exit;
-                $user_query = "SELECT country,lat,longitude,count('city') as city FROM `user_places` WHERE user_id='".$user_id."' and country ='".$country."' GROUP BY country";
-                $new_place = mysqli_query($conn,$user_query);
-                $new_place_info = mysqli_fetch_array($new_place);
-              //  print_r($new_place_info);exit;
-				$response = array("status"=>1,"response"=>"User Place Added Successfully","lat"=>$new_place_info['lat'],"long"=>$new_place_info['longitude'],"country"=>$new_place_info['country'],"count"=>$new_place_info['city']);
+               $city= $city !=0 ?$city[0]:"";
+              
+				$response = array("status"=>1,"response"=>"User Place Added Successfully","result"=>array("lat"=>$lat,"lng"=>$long,"city"=>$city));
         	}else{
-        		$response = array("status"=>0,"response"=>"Address Not found , Please try with another one","lat"=>"","long"=>"","country"=>"","count"=>"");
+        		$response = array("status"=>0,"response"=>"Address Not found , Please try with another one","result"=>"");
         	}
          echo    $map_result =json_encode($response,true);
  
